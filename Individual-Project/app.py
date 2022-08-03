@@ -6,7 +6,72 @@ app = Flask(__name__, template_folder='templates', static_folder='static')
 app.config['SECRET_KEY'] = 'super-secret-key'
 
 #Code goes below here
+config = {
+  "apiKey": "AIzaSyDvZ9o19c0oQOwSl4faMG9YctRtiKFF3jI",
+  "authDomain": "personal-24e1c.firebaseapp.com",
+  "projectId": "personal-24e1c",
+  "storageBucket": "personal-24e1c.appspot.com",
+  "messagingSenderId": "236072160472",
+  "appId": "1:236072160472:web:12a318e7515ee41dd15bad",
+  "measurementId": "G-M6ENR0BF9Y",
+  "databaseURL":"https://personal-24e1c-default-rtdb.europe-west1.firebasedatabase.app/"
+}
 
+firebase = pyrebase.initialize_app(config)
+auth = firebase.auth()
+db = firebase.database()
+@app.route('/', methods=['GET', 'POST'])
+def signin():
+    error = ""
+    if request.method == 'POST':
+        email = request.form['email']
+        password = request.form['password']
+        try:
+            login_session['user'] = auth.sign_in_with_email_and_password(email, password)
+            db.child
+            return redirect('/home')
+        except:
+            error = "Authentication failed"
+    return render_template("Signin.html")
+
+@app.route('/signup',  methods=['GET', 'POST'])
+def signup():
+    error = ""
+    if request.method == 'POST':
+        email = request.form['email']
+        password = request.form['password']
+        name = request.form['name']
+        repeat_password = request.form['password-repeat']
+        if email == "asillimar@gmail.com" and password == "asil123":
+            admin = True
+        else:
+            admin = False
+        if password == repeat_password:
+            login_session['user'] = auth.create_user_with_email_and_password(email, password)
+            user = {"name": name,"password":password,"email": email, "admin":admin}
+            db.child("Users").child(login_session['user']['localId']).set(user)
+            return redirect('/home')
+        else:
+            return render_template("Signup.html")
+    return render_template("Signup.html")
+
+
+@app.route('/profile', methods=['GET', 'POST'])
+def profile():
+    return render_template("profile.html")
+
+
+@app.route('/signout', methods=['GET', 'POST'])
+def signout():
+    login_session['user'] = None
+    auth.current_user = None
+    return redirect('/')
+
+
+
+@app.route('/home', methods=['GET', 'POST'])
+def sweet_home():
+    return render_template("index.html")
 
 
 
