@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+       <style>
+ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+}
+
+li {
+  display: inline;
+}
+    </style>
+    <ul>
+      <li><a href="{{url_for('sweet_home')}}"><button>home page</button></a></li>
+      <li><a href="{{url_for('profile')}}"><button>profile page</button></a></li>
+      <li><a href="{{url_for('signout')}}"><button>signout</button></a></li>
+    </ul>
+    <meta charset="UTF-8">
+    <title>levi's</title>
+</head>
+<body>
+    <h1>you have {{points}} points in your account</h>
+      <h1>how much points do you want to add</h1>
+      <input type="text" name="points">
+      <h1>do you want to use points</h1>
+      <input type="checkbox" name="use_points">
+        <input type="text" name="price">
+        <form>
+<script> 
+  var price = 0;
+      if (price>points){ 
+        price= price-points;
+        points = price/10 + points;
+      }
+      if (points>price){
+        points= points-price;
+        price=0;
+      }
+      if (points=price){
+        points=0;
+        price=0;
+      }
+
+      document.getElementById("points").innerHTML = points;
+</script>   
+    <div class="clearfix">
+      <!-- <form action="/input/<string:name>" method="POST"> 
+      
+      <a href="/"></a> -->
+      <h1 id="points"> </h1>
+      <button type="submit" class="submitbtn">submit</button>
+    
+    </div>
+</body>
+</html>

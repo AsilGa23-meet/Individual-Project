@@ -28,10 +28,10 @@ def signin():
         password = request.form['password']
         try:
             login_session['user'] = auth.sign_in_with_email_and_password(email, password)
-            db.child
-            return redirect('/home')
+            return redirect(url_for('sweet_home'))
         except:
             error = "Authentication failed"
+            return error
     return render_template("Signin.html")
 
 @app.route('/signup',  methods=['GET', 'POST'])
@@ -42,13 +42,13 @@ def signup():
         password = request.form['password']
         name = request.form['name']
         repeat_password = request.form['password-repeat']
-        if email == "asillimar@gmail.com" and password == "asil123":
-            admin = True
+        if email == "asilllimar@gmail.com" and password == "asil123":
+            db.child("Users").child(login_session).get().val()["admin"] = True
         else:
             admin = False
         if password == repeat_password:
             login_session['user'] = auth.create_user_with_email_and_password(email, password)
-            user = {"name": name,"password":password,"email": email, "admin":admin}
+            user = {"name": name,"password":password,"email": email, "admin":admin, "points":0}
             db.child("Users").child(login_session['user']['localId']).set(user)
             return redirect('/home')
         else:
@@ -58,7 +58,8 @@ def signup():
 
 @app.route('/profile', methods=['GET', 'POST'])
 def profile():
-    return render_template("profile.html")
+    points = db.child("Users").child(login_session['user']['localId']).child("points").get().val()
+    return render_template("profile.html" ,points=points)
 
 
 @app.route('/signout', methods=['GET', 'POST'])
@@ -72,6 +73,18 @@ def signout():
 @app.route('/home', methods=['GET', 'POST'])
 def sweet_home():
     return render_template("index.html")
+
+@app.route('/input', methods=['GET', 'POST'])
+def add():
+    user = db.child("Users").child(login_session['user']['localId']).get().val()
+    points = user['points']
+
+    if request.method=='POST':
+        points = request.form['points']
+        return render_template("inputt.html",points=points)
+    return render_template("inputt.html" ,points=points)
+
+#<string:name>
 
 
 
